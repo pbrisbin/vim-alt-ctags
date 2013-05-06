@@ -7,17 +7,14 @@ An alternative ctags plugin for vim.
 1. Use pathogen
 2. Clone to `~/.vim/bundle/alt-ctags`
 
-## Ctags()
+## :Ctags
 
-The plugin exposes one function: `Ctags()`.
+The `Ctags` command can be invoked manually, but it's also set as an 
+`autocmd` and run when entering any buffer. This ensures your tags file 
+is always as up to date as possible.
 
-The function can be invoked manually via the `Ctags` command, but that's 
-not the intended usage. In stead, the function is automatically added as 
-an `autocmd` and run when entering any buffer. This ensures your tags 
-file is always as up to date as possible.
-
-The function `rm -f`s your `b:ctags_file` and runs `b:ctags_command` 
-which, presumably, rebuilds it.
+The command regenerates and overwrites your `b:ctags_file` by running 
+`b:ctags_command`.
 
 The action is silent and asynchronous. Any errors (vim or shell) are 
 completely ignored, so running this command constantly and automatically 
@@ -27,11 +24,11 @@ file).
 
 ## Settings
 
-`b:ctags_file` is the file path which alt-ctags will remove before 
-running your ctags command to recreate it.
+`b:ctags_file` is the path which alt-ctags will commit the updated tags 
+file to.
 
 For this to be useful, that file will need to be included in the `tags` 
-setting in vim proper. Luckily alt-ctags defaults this value to "tags" 
+setting in vim proper. Luckily, alt-ctags defaults this value to "tags" 
 which is included in vim's default of "./tags,tags", so it should Just 
 Work.
 
