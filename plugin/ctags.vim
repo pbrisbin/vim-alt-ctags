@@ -1,18 +1,23 @@
-function! Ctags()
+function! s:RunQuietly(cmd)
+  execute ':silent !'.a:cmd.' 2>/dev/null &'
+endfunction
+
+function! s:RegenerateCtags()
   if exists('b:ctags_command')
-    " vim lets you define multiple tags files. this doesn't work for us.
-    " we want to know an exact file so we can actively remove it.
     if !exists('b:ctags_file')
       let b:ctags_file = 'tags'
     endif
 
+    let l:tmpfile = b:ctags_file.'.temp'
+
     try
-      execute ':silent !rm -f '.b:ctags_file.'; '.b:ctags_command.' 2>/dev/null &'
+      call s:RunQuietly(b:ctags_command.' -f '.l:tmpfile)
+      call s:RunQuietly('mv '.l:tmpfile.' '.b:ctags_file)
     catch
       " ignore any errors
     endtry
   endif
 endfunction
 
-command! Ctags call Ctags()
-autocmd BufEnter * call Ctags()
+command! Ctags call s:RegenerateCtags()
+autocmd BufEnter * call s:RegenerateCtags()
