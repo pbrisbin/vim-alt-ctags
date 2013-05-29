@@ -1,3 +1,8 @@
+if exists("g:alt_ctags_loaded")
+  finish
+endif
+let g:alt_ctags_loaded = 1
+
 function! s:RunQuietly(cmd)
   execute ':silent !'.a:cmd.' 2>/dev/null &'
 endfunction
