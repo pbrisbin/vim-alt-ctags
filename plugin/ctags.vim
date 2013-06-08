@@ -11,6 +11,10 @@ if !exists("g:ctags_file")
   let g:ctags_file = 'tags'
 endif
 
+if !exists("g:ctags_excludes")
+  let g:ctags_excludes = ['~']
+endif
+
 function s:RunQuietly(cmd)
   execute ":silent !".a:cmd." &>/dev/null &"
 endfunction
@@ -20,8 +24,24 @@ function s:IsGitControlled(file)
   return !v:shell_error
 endfunction
 
+function s:IsExcluded()
+  let cur = getcwd().'/'
+
+  for exclude in g:ctags_excludes
+    if cur == fnamemodify(exclude, ':p')
+      return 1
+    endif
+  endfor
+
+  return 0
+endfunction
+
 function s:RegenerateCtags()
   if !s:IsGitControlled(expand('%'))
+    return
+  endif
+
+  if s:IsExcluded()
     return
   endif
 
