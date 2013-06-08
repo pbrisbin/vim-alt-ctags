@@ -19,13 +19,13 @@ function s:RunQuietly(cmd)
   execute ":silent! !".a:cmd." &>/dev/null &"
 endfunction
 
-function s:IsGitControlled(file)
-  execute ":silent! !git ls-files '".a:file."' --error-unmatch &>/dev/null"
-  return !v:shell_error
+function s:Untracked()
+  execute ":silent! !git ls-files '%' --error-unmatch &>/dev/null"
+  return v:shell_error
 endfunction
 
-function s:IsExcluded()
-  let cur = getcwd().'/'
+function s:Excluded()
+  let cur = fnamemodify(getcwd(), ':p')
 
   for exclude in g:ctags_excludes
     if cur == fnamemodify(exclude, ':p')
@@ -38,11 +38,7 @@ endfunction
 
 function s:RegenerateCtags()
   if !filereadable(g:ctags_file)
-    if !s:IsGitControlled(expand('%'))
-      return
-    endif
-
-    if s:IsExcluded()
+    if s:Untracked() || s:Excluded()
       return
     endif
   endif
