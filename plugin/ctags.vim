@@ -37,12 +37,14 @@ function s:IsExcluded()
 endfunction
 
 function s:RegenerateCtags()
-  if !s:IsGitControlled(expand('%'))
-    return
-  endif
+  if !filereadable(g:ctags_file)
+    if !s:IsGitControlled(expand('%'))
+      return
+    endif
 
-  if s:IsExcluded()
-    return
+    if s:IsExcluded()
+      return
+    endif
   endif
 
   if !exists('b:ctags_command')
