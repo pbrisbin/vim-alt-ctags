@@ -3,39 +3,42 @@ if exists("g:alt_ctags_loaded")
 endif
 let g:alt_ctags_loaded = 1
 
-if !exists("g:default_ctags_command")
-  let g:default_ctags_command = 'ctags -R .'
+if !exists("g:ctags_command")
+  let g:ctags_command = "ctags -f '%f' -R"
 endif
 
-function! s:RunQuietly(cmd)
-  execute ':silent !'.a:cmd.' 2>/dev/null &'
+if !exists("g:ctags_file")
+  let g:ctags_file = 'tags'
+endif
+
+function s:RunQuietly(cmd)
+  execute ":silent !".a:cmd." &>/dev/null &"
 endfunction
 
-function! s:IsGitProject()
-  execute "silent! !git rev-parse"
+function s:IsGitControlled(file)
+  execute ":silent! !git ls-files '".a:file."' --error-unmatch &>/dev/null"
   return !v:shell_error
 endfunction
 
-function! s:RegenerateCtags()
-  if !exists('b:ctags_command') && s:IsGitProject()
-    let b:ctags_command = g:default_ctags_command
+function s:RegenerateCtags()
+  if !s:IsGitControlled(expand('%'))
+    return
   endif
 
-  if exists('b:ctags_command')
-    if !exists('b:ctags_file')
-      let b:ctags_file = 'tags'
-    endif
-
-    let l:tmpfile = b:ctags_file.'.temp'
-
-    try
-      call s:RunQuietly(b:ctags_command.' -f '.l:tmpfile)
-      call s:RunQuietly('mv '.l:tmpfile.' '.b:ctags_file)
-    catch
-      " ignore any errors
-    endtry
+  if !exists('b:ctags_command')
+    let b:ctags_command = g:ctags_command
   endif
+
+  let tempfile = g:ctags_file.'.temp'
+  let ctags_command = substitute(b:ctags_command, '%f', tempfile, '')
+
+  try
+    call s:RunQuietly(ctags_command)
+    call s:RunQuietly("mv '".tempfile."' '".g:ctags_file."'")
+  catch
+    " ignore any errors
+  endtry
 endfunction
 
-command! Ctags call s:RegenerateCtags()
+command Ctags call s:RegenerateCtags()
 autocmd BufEnter * call s:RegenerateCtags()
