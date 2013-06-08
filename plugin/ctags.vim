@@ -3,11 +3,24 @@ if exists("g:alt_ctags_loaded")
 endif
 let g:alt_ctags_loaded = 1
 
+if !exists("g:default_ctags_command")
+  let g:default_ctags_command = 'ctags -R .'
+endif
+
 function! s:RunQuietly(cmd)
   execute ':silent !'.a:cmd.' 2>/dev/null &'
 endfunction
 
+function! s:IsGitProject()
+  execute "silent! !git rev-parse"
+  return !v:shell_error
+endfunction
+
 function! s:RegenerateCtags()
+  if !exists('b:ctags_command') && s:IsGitProject()
+    let b:ctags_command = g:default_ctags_command
+  endif
+
   if exists('b:ctags_command')
     if !exists('b:ctags_file')
       let b:ctags_file = 'tags'
