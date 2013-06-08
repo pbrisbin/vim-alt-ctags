@@ -10,11 +10,12 @@ asynchronously on save of any git-controlled file.
 
 ## Options
 
-| Setting                | Value              | Notes
+| Setting                | Default value      | Notes
 | ---                    | ---                | ---
-| **g:alt_ctags_loaded** | unset              | Setting this value prevents alt-ctags from loading
+| **g:alt_ctags_loaded** | unset              | Setting this value prevents alt-ctags from loading at all
 | **g:ctags_command**    | `ctags -f '%f' -R` | `%f` represents the output file
 | **g:ctags_file**       | `tags`             |
+| **g:ctags_excludes**   | `['~']`            | Ctags will not be run in these directories (a trailing `/` is required)
 | **b:ctags_command**    | unset              | Buffer-specific override
 
 ## Notes
