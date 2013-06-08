@@ -1,57 +1,44 @@
 # Alt Ctags
 
-An alternative ctags plugin for vim.
+An alternative ctags plugin for vim. Automatically runs ctags 
+asynchronously on save of any git-controlled file.
 
 ## Installation
 
 1. Use pathogen
 2. Clone to `~/.vim/bundle/alt-ctags`
 
-## :Ctags
+## Options
 
-The `Ctags` command can be invoked manually, but it's also set as an 
-`autocmd` and run when entering any buffer. This ensures your tags file 
-is always as up to date as possible.
+| Setting                | Value            | Notes
+| ---                    | ---              | ---
+| **g:alt_ctags_loaded** | unset            | Setting this value prevents alt-ctags from loading
+| **g:ctags_command**    | `ctags -f %f -R` | `%f` represents the output file
+| **g:ctags_file**       | `tags`           |
+| **b:ctags_command**    | unset            | Buffer-specific override
 
-The command regenerates and overwrites your `b:ctags_file` by running 
-`b:ctags_command`.
+## Notes
 
-The action is silent and asynchronous. Any errors (vim or shell) are 
-completely ignored, so running this command constantly and automatically 
-shouldn't cause much trouble. That said, you'll get no indication if 
-something's not working (aside from an out of date or missing tags 
-file).
+The `%f` in the ctags commands is required because we actually generate 
+to a temporary file then move it into place. This prevents intermittent 
+errors if vim attempts to access the file while it's being generated.
 
-## Settings
+## Examples
 
-`b:ctags_file` is the path which alt-ctags will commit the updated tags 
-file to.
-
-For this to be useful, that file will need to be included in the `tags` 
-setting in vim proper. Luckily, alt-ctags defaults this value to "tags" 
-which is included in vim's default of "./tags,tags", so it should Just 
-Work.
-
-`b:ctags_command` is the command that will be run to rebuild your ctags 
-file. If you do not set a `b:ctags_command`, this plugin does nothing. 
-This is a safer default since `ctags -R .` could simply churn forever if 
-it were kicked off in the wrong directory.
-
-For this reason, It's **very important** that you only set a 
-`b:ctags_command` from a filetype hook **and** only after you've done 
-some check to ensure you're in a project directory where building a tags 
-file is appropriate and feasible.
-
-Here's what I use for ruby:
-
-**~/.vim/ftplugin/ruby.vim**
+**ftplugin/ruby.vim**
 
 ~~~ { .vim }
 if isdirectory('app')
   " probably rails
-  let b:ctags_command = 'ctags -R app lib vendor'
-elseif isdirectory('lib')
-  " normal ruby project
-  let b:ctags_command = 'ctags -R lib'
+  let b:ctags_command = 'ctags -f %f -R --exclude='*.js' --langmap='ruby:+.rake.builder.rjs' --languages=-javascript app lib vendor'
+else
+  " typical ruby project
+  let b:ctags_command = 'ctags -f %f -R lib'
 endif
+~~~
+
+**ftplugin/haskell.vim**
+
+~~~ { .vim }
+let b:ctags_command = 'echo ":ctags %f" | ghci -v0 main.hs'
 ~~~
