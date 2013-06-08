@@ -15,7 +15,7 @@ asynchronously on save of any git-controlled file.
 | **g:alt_ctags_loaded** | unset              | Setting this value prevents alt-ctags from loading at all
 | **g:ctags_command**    | `ctags -f '%f' -R` | `%f` represents the output file
 | **g:ctags_file**       | `tags`             |
-| **g:ctags_excludes**   | `['~']`            | Ctags will not be run in these directories (a trailing `/` is required)
+| **g:ctags_excludes**   | `['~']`            | Ctags will not be run in these directories
 | **b:ctags_command**    | unset              | Buffer-specific override
 
 ## Notes
