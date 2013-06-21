@@ -37,10 +37,13 @@ function s:Excluded()
 endfunction
 
 function s:RegenerateCtags()
-  if !filereadable(g:ctags_file)
-    if s:Untracked() || s:Excluded()
-      return
-    endif
+  if s:Excluded()
+    return
+  endif
+
+  " avoid git check if a tags file is already present
+  if !filereadable(g:ctags_file) && s:Untracked()
+    return
   endif
 
   if !exists('b:ctags_command')
