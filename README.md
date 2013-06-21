@@ -1,7 +1,7 @@
 # Alt Ctags
 
 An alternative ctags plugin for vim. Automatically runs ctags 
-asynchronously on save of any git-controlled file.
+asynchronously upon opening any git-controlled file.
 
 ## Installation
 
