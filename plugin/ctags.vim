@@ -16,7 +16,7 @@ if !exists("g:ctags_excludes")
 endif
 
 function s:RunQuietly(cmd)
-  execute ":silent! !".a:cmd." &>/dev/null &"
+  silent! ":!".a:cmd." &>/dev/null"
 endfunction
 
 function s:Untracked()
