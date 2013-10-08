@@ -16,11 +16,11 @@ if !exists("g:ctags_excludes")
 endif
 
 function s:RunQuietly(cmd)
-  silent! ":!".a:cmd." &>/dev/null"
+  silent! execute '!'.a:cmd.' &>/dev/null &'
 endfunction
 
 function s:Untracked()
-  execute ":silent! !git ls-files '%' --error-unmatch &>/dev/null"
+  silent! execute "!git ls-files '%' --error-unmatch &>/dev/null"
   return v:shell_error
 endfunction
 
