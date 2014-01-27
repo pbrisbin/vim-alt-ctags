@@ -15,10 +15,6 @@ if !exists("g:ctags_excludes")
   let g:ctags_excludes = ['~']
 endif
 
-function s:RunQuietly(cmd)
-  silent! execute '!'.a:cmd.' &>/dev/null &'
-endfunction
-
 function s:Untracked()
   silent! execute "!git ls-files '%' --error-unmatch &>/dev/null"
   return v:shell_error
@@ -52,13 +48,9 @@ function s:RegenerateCtags()
 
   let tempfile = g:ctags_file.'.temp'
   let ctags_command = substitute(b:ctags_command, '%f', tempfile, '')
+  let full_command = ctags_command." && mv '".tempfile."' '".g:ctags_file."'"
 
-  try
-    call s:RunQuietly(ctags_command)
-    call s:RunQuietly("mv '".tempfile."' '".g:ctags_file."'")
-  catch
-    " ignore any errors
-  endtry
+  silent! execute '!'.full_command.' &>/dev/null &'
 endfunction
 
 command Ctags call s:RegenerateCtags()
