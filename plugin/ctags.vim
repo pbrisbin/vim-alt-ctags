@@ -50,7 +50,7 @@ function s:RegenerateCtags()
   let ctags_command = substitute(b:ctags_command, '%f', tempfile, '')
   let full_command = ctags_command." && mv '".tempfile."' '".g:ctags_file."'"
 
-  silent! execute '!'.full_command.' &>/dev/null &'
+  silent! execute '!( '.full_command.' ) &>/dev/null &'
 endfunction
 
 command Ctags call s:RegenerateCtags()
