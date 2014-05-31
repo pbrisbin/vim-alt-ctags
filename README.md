@@ -5,8 +5,10 @@ asynchronously upon opening any git-controlled file.
 
 ## Installation
 
-1. Use pathogen
-2. Clone to `~/.vim/bundle/alt-ctags`
+1. Use [Vundle][]
+2. Add `Plugin "pbrisbin/vim-alt-ctags"`
+
+[vundle]: https://github.com/gmarik/Vundle.vim
 
 ## Options
 
